@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:video_player/video_player.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'constants.dart';
 import 'dialog.dart';
@@ -102,7 +102,7 @@ class _IPlayerState extends State<IPlayer> {
 
   @override
   void initState() {
-    Wakelock.enable();
+    WakelockPlus.enable();
     _setPlayer();
     _setAllOrientation();
     super.initState();
@@ -418,7 +418,7 @@ class _IPlayerState extends State<IPlayer> {
               playerController.addListener(() {
                 _positionController.sink.add(_sliderValue);
                 if (playerController.value.isCompleted) {
-                  Wakelock.disable();
+                  WakelockPlus.disable();
                 }
                 if (!_isSliderTouch &&
                     !playerController.value.isBuffering &&
@@ -478,7 +478,7 @@ class _IPlayerState extends State<IPlayer> {
                     playerController.addListener(() {
                       _positionController.sink.add(_sliderValue);
                       if (playerController.value.isCompleted) {
-                        Wakelock.disable();
+                        WakelockPlus.disable();
                       }
                       if (!_isSliderTouch &&
                           !playerController.value.isBuffering &&
