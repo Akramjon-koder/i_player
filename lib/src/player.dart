@@ -114,6 +114,7 @@ class _IPlayerState extends State<IPlayer> {
       backgroundColor: Colors.black,
       body: OrientationBuilder(builder: (context, orientation) {
         return Stack(
+          alignment: Alignment.center,
           children: playerController.value.isInitialized
               ? [
                   GestureDetector(
@@ -131,6 +132,7 @@ class _IPlayerState extends State<IPlayer> {
                           width: 600.w,
                           height: 600.w / playerController.value.aspectRatio,
                           child: Stack(
+                            alignment: Alignment.center,
                             children: [
                               Row(
                                 children: [
