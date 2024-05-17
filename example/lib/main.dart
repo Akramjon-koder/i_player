@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       home: IPlayer(
         title: 'Flutter Demo IPlayer',
-        sourceUrl: 'https://live-par-2-cdn-alt.livepush.io/live/bigbuckbunnyclip/index.m3u8',
+        sourceUrl: 'https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8',
         screenSetOptions: ScreenSetOptions(
             unActiveDuration: 5,
             activeDuration: 1,

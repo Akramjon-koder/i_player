@@ -127,119 +127,121 @@ class _IPlayerState extends State<IPlayer> {
                       constrained: true,
                       panEnabled: false,
                       scaleEnabled: orientation == Orientation.landscape,
-                      child: Center(
-                        child: SizedBox(
-                          width: 600.w,
-                          height: 600.w / playerController.value.aspectRatio,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: AspectRatio(
-                                      aspectRatio:
-                                      playerController.value.aspectRatio,
-                                      child: Stack(
-                                        children: [
-                                          VideoPlayer(playerController),
-                                          if(widget.screenSetOptions != null)
-                                            ScreenSet(
-                                              options: widget.screenSetOptions!,
-                                            ),
-                                        ],
+                      child: SafeArea(
+                        child: Center(
+                          child: SizedBox(
+                            width: 600.w,
+                            height: 600.w / playerController.value.aspectRatio,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: AspectRatio(
+                                        aspectRatio:
+                                        playerController.value.aspectRatio,
+                                        child: Stack(
+                                          children: [
+                                            VideoPlayer(playerController),
+                                            if(widget.screenSetOptions != null)
+                                              ScreenSet(
+                                                options: widget.screenSetOptions!,
+                                              ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              if (!_isBlocked)
-                                Center(
-                                  child: StreamBuilder<bool>(
-                                      stream: _centerWidgetsStream,
-                                      builder: (context, snapshot) {
-                                        if (_toHideTimeOut <= 0) {
-                                          return const SizedBox();
-                                        }
-                                        return Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            GestureDetector(
-                                              onTap: () {
-                                                int seconds = playerController
-                                                    .value.position.inSeconds;
-                                                if (seconds > 10) {
-                                                  seconds -= 10;
-                                                  playerController.seekTo(
-                                                      Duration(
-                                                          seconds: seconds));
-                                                }
-                                                unHide();
-                                              },
-                                              child: FaIcon(
-                                                FontAwesomeIcons.backward,
-                                                color: Colors.white,
-                                                size: 32.o,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.all(16.o),
-                                              child: GestureDetector(
+                                  ],
+                                ),
+                                if (!_isBlocked)
+                                  Center(
+                                    child: StreamBuilder<bool>(
+                                        stream: _centerWidgetsStream,
+                                        builder: (context, snapshot) {
+                                          if (_toHideTimeOut <= 0) {
+                                            return const SizedBox();
+                                          }
+                                          return Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              GestureDetector(
                                                 onTap: () {
-                                                  if (playerController
-                                                      .value.isPlaying) {
-                                                    playerController.pause();
-                                                  } else {
-                                                    playerController.play();
+                                                  int seconds = playerController
+                                                      .value.position.inSeconds;
+                                                  if (seconds > 10) {
+                                                    seconds -= 10;
+                                                    playerController.seekTo(
+                                                        Duration(
+                                                            seconds: seconds));
                                                   }
                                                   unHide();
                                                 },
                                                 child: FaIcon(
-                                                  playerController
-                                                          .value.isPlaying
-                                                      ? FontAwesomeIcons.pause
-                                                      : FontAwesomeIcons.play,
+                                                  FontAwesomeIcons.backward,
                                                   color: Colors.white,
-                                                  size: 48.o,
+                                                  size: 32.o,
                                                 ),
                                               ),
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                int seconds = playerController
-                                                    .value.position.inSeconds;
-                                                if (seconds <
+                                              Padding(
+                                                padding: EdgeInsets.all(16.o),
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    if (playerController
+                                                        .value.isPlaying) {
+                                                      playerController.pause();
+                                                    } else {
+                                                      playerController.play();
+                                                    }
+                                                    unHide();
+                                                  },
+                                                  child: FaIcon(
                                                     playerController
-                                                            .value
-                                                            .duration
-                                                            .inSeconds -
-                                                        10) {
-                                                  seconds += 10;
-                                                  playerController.seekTo(
-                                                      Duration(
-                                                          seconds: seconds));
-                                                }
-                                                unHide();
-                                              },
-                                              child: FaIcon(
-                                                FontAwesomeIcons.forward,
-                                                color: Colors.white,
-                                                size: 32.o,
+                                                            .value.isPlaying
+                                                        ? FontAwesomeIcons.pause
+                                                        : FontAwesomeIcons.play,
+                                                    color: Colors.white,
+                                                    size: 48.o,
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                          ],
-                                        );
-                                      }),
-                                ),
-                              if (!_isBlocked)
-                                TouchTools(
-                                  height: 600.w /
-                                      playerController.value.aspectRatio,
-                                  playerController: playerController,
-                                ),
-                            ],
+                                              GestureDetector(
+                                                onTap: () {
+                                                  int seconds = playerController
+                                                      .value.position.inSeconds;
+                                                  if (seconds <
+                                                      playerController
+                                                              .value
+                                                              .duration
+                                                              .inSeconds -
+                                                          10) {
+                                                    seconds += 10;
+                                                    playerController.seekTo(
+                                                        Duration(
+                                                            seconds: seconds));
+                                                  }
+                                                  unHide();
+                                                },
+                                                child: FaIcon(
+                                                  FontAwesomeIcons.forward,
+                                                  color: Colors.white,
+                                                  size: 32.o,
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        }),
+                                  ),
+                                if (!_isBlocked)
+                                  TouchTools(
+                                    height: 600.w /
+                                        playerController.value.aspectRatio,
+                                    playerController: playerController,
+                                  ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -425,10 +427,12 @@ class _IPlayerState extends State<IPlayer> {
                 if (!_isSliderTouch &&
                     !playerController.value.isBuffering &&
                     playerController.value.duration != Duration.zero) {
-                  _sliderValue =
-                      playerController.value.position.inMilliseconds /
-                          playerController.value.duration.inMilliseconds;
-                  _sliderController.sink.add(_sliderValue);
+                  int duration = playerController.value.duration.inMilliseconds;
+                  int position = playerController.value.position.inMilliseconds;
+                  if(duration > 0 && position <= duration){
+                    _sliderValue = position / duration;
+                    _sliderController.sink.add(_sliderValue);
+                  }
                 }
                 if (playerController.value.isPlaying != playingValue ||
                     playerController.value.isBuffering != buferingValue) {
@@ -485,10 +489,12 @@ class _IPlayerState extends State<IPlayer> {
                       if (!_isSliderTouch &&
                           !playerController.value.isBuffering &&
                           playerController.value.duration != Duration.zero) {
-                        _sliderValue =
-                            playerController.value.position.inMilliseconds /
-                                playerController.value.duration.inMilliseconds;
-                        _sliderController.sink.add(_sliderValue);
+                        int duration = playerController.value.duration.inMilliseconds;
+                        int position = playerController.value.position.inMilliseconds;
+                        if(duration > 0 && position <= duration){
+                          _sliderValue = position / duration;
+                          _sliderController.sink.add(_sliderValue);
+                        }
                       }
                       if (playerController.value.isPlaying != playingValue ||
                           playerController.value.isBuffering != buferingValue) {
