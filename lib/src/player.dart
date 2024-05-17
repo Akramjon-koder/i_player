@@ -111,7 +111,7 @@ class _IPlayerState extends State<IPlayer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: Colors.black,
       body: OrientationBuilder(builder: (context, orientation) {
         return Stack(
           alignment: Alignment.center,
