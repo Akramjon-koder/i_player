@@ -41,15 +41,23 @@ class IPlayer extends StatefulWidget {
   /// noaktiv rangi
   final Color secondaryColor;
 
+  /// ortqaga qaytish tugmasini borligi
+  final bool canPop;
+
   /// Qo'shimcha hususiyatlardan foydalanishingiz mumkin
   final ScreenSetOptions? screenSetOptions;
 
   /// Videoga havola
   final String sourceUrl;
+
+  /// VQo'shimcha tugmalar
+  final List<Widget> tools;
   const IPlayer({
     super.key,
     required this.title,
     required this.sourceUrl,
+    this.tools = const[],
+    this.canPop = false,
     this.primaryColor = Colors.red,
     this.secondaryColor = Colors.grey,
     this.screenSetOptions,
@@ -260,14 +268,15 @@ class _IPlayerState extends State<IPlayer> {
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  IconButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.arrowLeft,
-                                      color: Colors.white,
-                                      size: 22.o,
+                                  if(widget.canPop)
+                                    IconButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.arrowLeft,
+                                        color: Colors.white,
+                                        size: 22.o,
+                                      ),
                                     ),
-                                  ),
                                   Expanded(
                                     child: Text(
                                       widget.title,
@@ -281,9 +290,10 @@ class _IPlayerState extends State<IPlayer> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(
-                                    width: 20.o,
-                                  ),
+                                  if(widget.canPop)
+                                    SizedBox(
+                                      width: 20.o,
+                                    ),
                                 ],
                               ),
                               const Spacer(),
@@ -378,7 +388,8 @@ class _IPlayerState extends State<IPlayer> {
                                             onTap: _setSpeed,
                                             icon: FontAwesomeIcons.gaugeHigh,
                                           ),
-                                        ],
+                                    ...widget.tools,
+                                  ],
                                 ),
                               ),
                               if (Platform.isIOS)
