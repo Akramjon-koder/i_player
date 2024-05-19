@@ -44,12 +44,6 @@
       "languageVersion": "2.19"
     },
     {
-      "name": "cupertino_icons",
-      "rootUri": "file:///Users/akramjonminochdinov/.pub-cache/hosted/pub.dev/cupertino_icons-1.0.8",
-      "packageUri": "lib/",
-      "languageVersion": "3.1"
-    },
-    {
       "name": "dbus",
       "rootUri": "file:///Users/akramjonminochdinov/.pub-cache/hosted/pub.dev/dbus-0.7.10",
       "packageUri": "lib/",
@@ -422,7 +416,7 @@
       "languageVersion": "3.4"
     }
   ],
-  "generated": "2024-05-17T12:50:44.720296Z",
+  "generated": "2024-05-18T19:06:17.695489Z",
   "generator": "pub",
   "generatorVersion": "3.4.0",
   "flutterRoot": "file:///Users/akramjonminochdinov/development/flutter",
