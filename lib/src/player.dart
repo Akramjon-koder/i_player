@@ -248,8 +248,8 @@ class _IPlayerState extends State<IPlayer> {
                                     if(widget.canPop)
                                       IconButton(
                                         onPressed: () {
-                                          Navigator.pop(context);
                                           playerNotifier.back();
+                                          Navigator.pop(context);
                                         },
                                         icon: FaIcon(
                                           FontAwesomeIcons.arrowLeft,
