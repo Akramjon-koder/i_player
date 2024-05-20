@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
@@ -16,6 +17,11 @@ PlayerNotifier get playerNotifier {
 }
 
 class PlayerNotifier with ChangeNotifier {
+
+  /// videoni pozitsiyasini saqlab qolish uchin
+  late SharedPreferences? prefs;
+
+  /// video playerni boshqaruvchisi
   late VideoPlayerController playerController;
 
   /// Video qaysi soniyasi qo'yilayotganini boshqaradi
@@ -38,7 +44,7 @@ class PlayerNotifier with ChangeNotifier {
 
   /// agar video sifatini tanlash mumkin bo'lgan formatda (m3u8) bo'lsa
   /// video sifatini tanlanishi mumkin.
-  List<String>? qualityList;
+  List<QualityOption>? qualityList;
 
   /// boshqaruv widgetlarini yashirilishini boshqaradi
   final ValueNotifier<bool> hideController = ValueNotifier(false);
@@ -46,7 +52,7 @@ class PlayerNotifier with ChangeNotifier {
   /// boshlang'ich video havolasi
   String _initialUrl = '';
 
-  void initializeUrl(String link) {
+  void initializeUrl(String link) async {
     if(_initialUrl != link){
       if(_initialUrl.isNotEmpty){
         playerController.removeListener(() {});
@@ -70,7 +76,7 @@ class PlayerNotifier with ChangeNotifier {
     if (_initialUrl.contains('http')) {
       playerController =
       VideoPlayerController.networkUrl(Uri.parse(_initialUrl))
-        ..initialize().then((_) {
+        ..initialize().then((_) async {
           bool playingValue = false, buferingValue = false;
           playerController.play();
           playerController.addListener(() {
@@ -96,6 +102,11 @@ class PlayerNotifier with ChangeNotifier {
           });
           unHide();
           notifyListeners();
+          prefs ??= await SharedPreferences.getInstance();
+          final position = prefs!.getInt(_initialUrl);
+          if(position != null){
+            playerController.seekTo(Duration(seconds: position));
+          }
         });
     }
   }
@@ -126,28 +137,24 @@ class PlayerNotifier with ChangeNotifier {
   }
 
   void selectQuality(BuildContext context) async {
-    qualityList ??= await hLSQualityLoader.getQualities(_initialUrl);
     if (qualityList == null) {
-      return;
+      qualityList = [QualityOption(path: _initialUrl,resolution: 'Auto')];
+      qualityList!.addAll(await hLSQualityLoader.getQualities(_initialUrl));
     }
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return PlayerSourseDialog(
           data: List<String>.generate(qualityList!.length,
-                  (index) => qualityList![index].split('_')[1].split('.').first),
+                  (index) => qualityList![index].resolution),
           onSelect: (int index) {
             final position = playerController.value.position.inMilliseconds;
             playerController.pause();
             playerController.removeListener(() {});
-            final loadUrl = _initialUrl
-                .substring(0, _initialUrl.lastIndexOf('/') + 1) +
-                qualityList![index];
-            playerController =
-            VideoPlayerController.networkUrl(Uri.parse(loadUrl))
+            playerController = VideoPlayerController.networkUrl(Uri.parse(qualityList![index].path))
               ..initialize().then((_) {
                 playerController.play();
-                playerController.seekTo(Duration(seconds: position));
+                playerController.seekTo(Duration(milliseconds: position));
                 bool playingValue = false, buferingValue = false;
                 playerController.addListener(() {
                   if (playerController.value.isCompleted) {
@@ -180,6 +187,9 @@ class PlayerNotifier with ChangeNotifier {
   }
 
   void back() {
+    if(prefs != null){
+      prefs!.setInt(_initialUrl, playerController.value.position.inSeconds);
+    }
     playerController.dispose();
     _initialUrl = '';
   }

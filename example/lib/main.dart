@@ -55,6 +55,9 @@ class _MyAppState extends State<MyApp> {
         valueListenable: orientationNotifier,
         child: IPlayer(
           title: 'Video name',
+          onPositionChange: (position){
+            ///save position
+          },
           tools: [
             GestureDetector(
               onTap: (){

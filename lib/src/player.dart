@@ -53,10 +53,14 @@ class IPlayer extends StatefulWidget {
   /// Qo'shimcha tugmalar
   final List<Widget> tools;
 
+  /// video pozitsiyasi o'zgarganda video pozitsiyasini(sekund) qaytaradi
+  final Function(int position)? onPositionChange;
+
   const IPlayer({
     super.key,
     required this.title,
     required this.sourceUrl,
+    this.onPositionChange,
     this.tools = const[],
     this.canPop = false,
     this.primaryColor = Colors.red,
@@ -329,6 +333,9 @@ class _IPlayerState extends State<IPlayer> {
                                       ValueListenableBuilder(
                                           valueListenable: playerNotifier.videoPosition,
                                           builder: (context, value, child) {
+                                            if(widget.onPositionChange!= null){
+                                              widget.onPositionChange!(playerNotifier.playerController.value.position.inSeconds);
+                                            }
                                             return Text(
                                               '${_videoPosition(playerNotifier.playerController.value.position)} / ${_videoPosition(playerNotifier.playerController.value.duration)}',
                                               style: TextStyle(
@@ -401,21 +408,6 @@ class _IPlayerState extends State<IPlayer> {
           );
         },
       );
-
-  Future _setAllOrientation() async {
-    await SystemChrome.setPreferredOrientations(DeviceOrientation.values);
-    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: SystemUiOverlay.values);
-  }
-
-  Future _disableLanscapeMode() async {
-    await SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitDown,
-      DeviceOrientation.portraitUp,
-    ]);
-    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: SystemUiOverlay.values);
-  }
 
 }
 
