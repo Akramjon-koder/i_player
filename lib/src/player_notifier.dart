@@ -28,7 +28,7 @@ class PlayerNotifier with ChangeNotifier {
   final ValueNotifier<double> videoPosition = ValueNotifier(0);
 
   /// Markazdagi widgetlarni boshqaradi
-  final ValueNotifier<bool> centerWidgets = ValueNotifier(true);
+  final ValueNotifier<bool> playingNotifier = ValueNotifier(true);
 
   /// Sliderni pozitsiyasini anglatadi.
   final ValueNotifier<double> slider = ValueNotifier(0);
@@ -97,12 +97,12 @@ class PlayerNotifier with ChangeNotifier {
                 playerController.value.isBuffering != buferingValue) {
               playingValue = playerController.value.isPlaying;
               buferingValue = playerController.value.isBuffering;
-              centerWidgets.value = playingValue;
+              playingNotifier.value = !playingNotifier.value;
             }
           });
           unHide();
           notifyListeners();
-          prefs ??= await SharedPreferences.getInstance();
+          prefs = await SharedPreferences.getInstance();
           final position = prefs!.getInt(_initialUrl);
           if(position != null){
             playerController.seekTo(Duration(seconds: position));
@@ -116,16 +116,16 @@ class PlayerNotifier with ChangeNotifier {
       if (_hideTimer != null) {
         _hideTimer!.cancel();
       }
-      hideController.value = false;
-      centerWidgets.value = false;
       toHideTimeOut = 8;
+      hideController.value = false;
+      playingNotifier.value = !playingNotifier.value;
       _hideTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
         if (playerController.value.isPlaying) {
           if (toHideTimeOut <= 0) {
             _hideTimer!.cancel();
             _hideTimer = null;
-            hideController.value = false;
-            centerWidgets.value = true;
+            hideController.value = true;
+            playingNotifier.value = !playingNotifier.value;
           } else {
             toHideTimeOut--;
           }
@@ -174,7 +174,7 @@ class PlayerNotifier with ChangeNotifier {
                       playerController.value.isBuffering != buferingValue) {
                     playingValue = playerController.value.isPlaying;
                     buferingValue = playerController.value.isBuffering;
-                    centerWidgets.value = playingValue;
+                    playingNotifier.value = !playingNotifier.value;
                   }
                 });
                 unHide();

@@ -80,7 +80,6 @@ class _IPlayerState extends State<IPlayer> {
   void initState() {
     WakelockPlus.enable();
     playerNotifier.initializeUrl(widget.sourceUrl);
-    // _setAllOrientation();
     super.initState();
   }
 
@@ -103,7 +102,20 @@ class _IPlayerState extends State<IPlayer> {
                 children: playerNotifier.playerController.value.isInitialized
                     ? [
                         GestureDetector(
-                          onTapDown: (details) => playerNotifier.unHide(),
+                          onTapUp: (details) {
+                            if(playerNotifier.playerController.value.isPlaying){
+                              if(!playerNotifier.hideController.value){
+                                Future.delayed(const Duration(milliseconds: 1)).then((v){
+                                  playerNotifier.toHideTimeOut = 0;
+                                  playerNotifier.hideController.value = true;
+                                  playerNotifier.playingNotifier.value = !playerNotifier.playingNotifier.value;
+                                });
+                                return;
+                              }
+                            }
+                            //playerNotifier.unHide();
+                            playerNotifier.unHide();
+                          },
                           onLongPressStart: (details) => playerNotifier.playerController.pause(),
                           onLongPressEnd: (details) => playerNotifier.playerController.play(),
                           child: InteractiveViewer(
@@ -142,8 +154,8 @@ class _IPlayerState extends State<IPlayer> {
                                       if (!_isBlocked)
                                         Center(
                                           child: ValueListenableBuilder(
-                                            valueListenable: playerNotifier.centerWidgets,
-                                            builder: (context, snapshot, child) {
+                                            valueListenable: playerNotifier.playingNotifier,
+                                            builder: (context, isPlaying, child) {
                                               if (playerNotifier.toHideTimeOut <= 0) {
                                                 return const SizedBox();
                                               }
@@ -174,13 +186,13 @@ class _IPlayerState extends State<IPlayer> {
                                                     padding: EdgeInsets.all(16.o),
                                                     child: GestureDetector(
                                                       onTap: () {
+                                                        print('fasdfas');
                                                         if (playerNotifier.playerController
                                                             .value.isPlaying) {
                                                           playerNotifier.playerController.pause();
                                                         } else {
                                                           playerNotifier.playerController.play();
                                                         }
-                                                        playerNotifier.unHide();
                                                       },
                                                       child: FaIcon(
                                                         playerNotifier.playerController
