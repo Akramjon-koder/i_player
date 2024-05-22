@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,8 @@ class _SetLogoState extends State<ScreenSet> {
     // Logotip pozitsiyasi o'zgarishi vaqti (sekund)
     positionNotifier = ValueNotifier(widget.options.positions.isEmpty
         ? Alignment.topLeft
-        : widget.options.positions.first);
+        : widget.options.positions.first ?? randomAlignt()
+    );
 
     // agar ekranni himoya qilish kerak bo'lsa ushbu ekranni yozib olishdan saqlaydi
     if(widget.options.isScreenSecure){
@@ -67,7 +69,8 @@ class _SetLogoState extends State<ScreenSet> {
         //pozitsiyasini o'zgartirish
         if(widget.options.positions.length > 2){
           positionNotifier.value = widget.options
-              .positions[positionIndex % widget.options.positions.length];
+              .positions[positionIndex % widget.options.positions.length]
+              ?? randomAlignt();
           positionIndex++;
         }
       }
@@ -146,3 +149,8 @@ class _SetLogoState extends State<ScreenSet> {
     super.dispose();
   }
 }
+
+Alignment randomAlignt() => Alignment(
+  Random().nextDouble() * 2 - 1,
+  Random().nextDouble() * 2 - 1,
+);

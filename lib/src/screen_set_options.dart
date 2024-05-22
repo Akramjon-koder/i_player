@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 class ScreenSetOptions{
   /// Logotip boradigan joylar
-  final List<Alignment> positions;
+  /// agar alignment qiymati null bo'lsa
+  /// tasodifiy joy tanlanadi
+  final List<Alignment?> positions;
 
   /// faol emas bo'lish vaqti (sekund)
   final int unActiveDuration;

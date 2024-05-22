@@ -80,10 +80,17 @@ class _IPlayerState extends State<IPlayer> {
   /// Pastki va yuqoridagi hususiyatlarni ko'rinish
   bool _isBlocked = false;
 
+  /// agar canpop = true bo'lsa ekran full screen deb qaraladi
+  /// qurilmani avvalgi saqlab turish uchun
+  late Orientation? initialOrientation;
+
   @override
   void initState() {
     WakelockPlus.enable();
     playerNotifier.initializeUrl(widget.sourceUrl);
+    if(widget.canPop){
+      setFullScreen();
+    }
     super.initState();
   }
 
@@ -407,12 +414,21 @@ class _IPlayerState extends State<IPlayer> {
     );
   }
 
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  //   playerController.dispose();
-  //
-  // }
+  @override
+  void dispose() {
+    super.dispose();
+    if(widget.canPop){
+      SystemChrome.setPreferredOrientations(
+          initialOrientation == Orientation.landscape ?[
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+          ]:[
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+          ],
+      );
+    }
+  }
 
   void _setSpeed() => showDialog(
         context: context,
@@ -425,6 +441,16 @@ class _IPlayerState extends State<IPlayer> {
         },
       );
 
+  void setFullScreen() {
+    WidgetsFlutterBinding.ensureInitialized();
+    initialOrientation = MediaQuery.of(context).orientation;
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
 }
 
 class _tool extends StatelessWidget {
