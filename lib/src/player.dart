@@ -44,6 +44,9 @@ class IPlayer extends StatefulWidget {
   /// ortqaga qaytish tugmasini borligi
   final bool canPop;
 
+  /// ortqaga qaytish tugmasini borligi
+  final bool isFullScreen;
+
   /// Qo'shimcha hususiyatlardan foydalanishingiz mumkin
   final ScreenSetOptions? screenSetOptions;
 
@@ -63,6 +66,7 @@ class IPlayer extends StatefulWidget {
     this.onPositionChange,
     this.tools = const[],
     this.canPop = false,
+    this.isFullScreen = false,
     this.primaryColor = Colors.red,
     this.secondaryColor = Colors.grey,
     this.screenSetOptions,
@@ -90,7 +94,7 @@ class _IPlayerState extends State<IPlayer> {
     arifmethic = (height + width) / 2;
     return PopScope(
       canPop: true,
-      onPopInvoked: (canPop) => playerNotifier.back(),
+      onPopInvoked: (canPop) => playerNotifier.back(true),
       child: Scaffold(
         backgroundColor: Colors.black,
         body: ListenableBuilder(
@@ -186,13 +190,13 @@ class _IPlayerState extends State<IPlayer> {
                                                     padding: EdgeInsets.all(16.o),
                                                     child: GestureDetector(
                                                       onTap: () {
-                                                        print('fasdfas');
                                                         if (playerNotifier.playerController
                                                             .value.isPlaying) {
                                                           playerNotifier.playerController.pause();
                                                         } else {
                                                           playerNotifier.playerController.play();
                                                         }
+                                                        playerNotifier.unHide();
                                                       },
                                                       child: FaIcon(
                                                         playerNotifier.playerController
@@ -260,7 +264,7 @@ class _IPlayerState extends State<IPlayer> {
                                     if(widget.canPop)
                                       IconButton(
                                         onPressed: () {
-                                          playerNotifier.back();
+                                          playerNotifier.back(true);
                                           Navigator.pop(context);
                                         },
                                         icon: FaIcon(

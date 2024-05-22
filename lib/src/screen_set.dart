@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:i_player/i_player.dart';
+import 'package:i_player/src/player.dart';
 import 'package:screen_protector/screen_protector.dart';
 import 'package:video_player/video_player.dart';
 

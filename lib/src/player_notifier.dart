@@ -186,11 +186,15 @@ class PlayerNotifier with ChangeNotifier {
     );
   }
 
-  void back() {
+  void back(bool isPop) {
     if(prefs != null){
       prefs!.setInt(_initialUrl, playerController.value.position.inSeconds);
     }
-    playerController.dispose();
+    if(isPop){
+      Future.delayed(const Duration(milliseconds: 10)).then((v){
+        playerController.dispose();
+      });
+    }
     _initialUrl = '';
   }
 

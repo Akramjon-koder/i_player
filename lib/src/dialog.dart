@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:i_player/i_player.dart';
+import 'package:i_player/src/player.dart';
 
 class PlayerSourseDialog extends StatelessWidget {
   final List<String> data;

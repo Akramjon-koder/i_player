@@ -61,7 +61,6 @@ class _MyAppState extends State<MyApp> {
           tools: [
             GestureDetector(
               onTap: (){
-                print('object');
                 SystemChrome.setPreferredOrientations(
                     orientationNotifier.value == Orientation.portrait ? [
                   DeviceOrientation.landscapeRight,
@@ -76,10 +75,10 @@ class _MyAppState extends State<MyApp> {
                     : Orientation.portrait;
               },
               child: Container(
-                padding: EdgeInsets.only(
-                  left: 10.o,
-                  right: 10.o,
-                  bottom: 10.o,
+                padding: const EdgeInsets.only(
+                  left: 12,
+                  right: 12,
+                  bottom: 12,
                 ),
                 color: Colors.transparent,
                 child: ValueListenableBuilder(
@@ -88,7 +87,7 @@ class _MyAppState extends State<MyApp> {
                     orientation == Orientation.portrait
                         ? FontAwesomeIcons.expand
                         : FontAwesomeIcons.compress,
-                    size: 22.o,
+                    size: 26,
                     color: Colors.white,
                   ),
                 ),
@@ -99,7 +98,6 @@ class _MyAppState extends State<MyApp> {
           screenSetOptions: options,
         ),
         builder: (context, orientation, child) {
-          print('orientation: $orientation');
           if(orientation == Orientation.landscape){
             return child!;
           }
