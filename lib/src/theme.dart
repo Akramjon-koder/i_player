@@ -19,10 +19,10 @@ class IplayerTheme{
   // agar ushbu icon null bo'lmasa Navigator.pop ishlaydi.
   final IconSourceData? back;
 
-  /// ortga qaytish uchun ishlatiladigan widget
+  /// videoni avvalroqdan davom ettirish iconi
   final IconSourceData left;
 
-  /// ortga qaytish uchun ishlatiladigan widget
+  /// video keyinroqdan qo'yilish iconi
   final IconSourceData right;
 
   /// ortga qaytish uchun ishlatiladigan widget
@@ -47,16 +47,18 @@ class IplayerTheme{
     this.primaryColor = Colors.red,
     this.secondaryColor = Colors.grey,
     this.title = const SizedBox(),
-    required this.loadIndicator,
     this.back,
-    required this.left,
-    required this.right,
-    required this.play,
-    required this.pause,
-    required this.quality,
-    required this.speed,
-    this.block,
-    this.unBlock,
+    this.left = const IconSourceData(icon: FontAwesomeIcons.backward),
+    this.right = const IconSourceData(icon: FontAwesomeIcons.forward),
+    this.play = const IconSourceData(icon: FontAwesomeIcons.play),
+    this.pause = const IconSourceData(icon: FontAwesomeIcons.pause),
+    this.quality = const IconSourceData(icon: FontAwesomeIcons.film),
+    this.speed = const IconSourceData(icon: FontAwesomeIcons.gaugeHigh),
+    this.block = const IconSourceData(icon: FontAwesomeIcons.lock),
+    this.unBlock = const IconSourceData(icon: FontAwesomeIcons.lockOpen),
+    this.loadIndicator = const CircularProgressIndicator(
+      backgroundColor: Colors.red,
+    ),
 }):
       //agar
         assert (block != null ? unBlock != null : true);
@@ -105,17 +107,3 @@ class IconSourceData{
     this.color = Colors.white,
   }) : assert (icon != null || imageAsset != null || svgAsset != null);
 }
-
-const defaultIPlayerTheme = IplayerTheme(
-  left: IconSourceData(icon: FontAwesomeIcons.backward),
-  right: IconSourceData(icon: FontAwesomeIcons.forward),
-  play: IconSourceData(icon: FontAwesomeIcons.play),
-  pause: IconSourceData(icon: FontAwesomeIcons.pause),
-  quality: IconSourceData(icon: FontAwesomeIcons.film),
-  speed: IconSourceData(icon: FontAwesomeIcons.gaugeHigh),
-  block: IconSourceData(icon: FontAwesomeIcons.lock),
-  unBlock: IconSourceData(icon: FontAwesomeIcons.lockOpen),
-  loadIndicator: CircularProgressIndicator(
-    backgroundColor: Colors.red,
-  ),
-);

@@ -14,6 +14,7 @@ class IplayerIcon extends StatelessWidget {
       return Icon(
         data.icon,
         size: size,
+        color: data.color,
       );
     }
     if(data.svgAsset != null){
@@ -21,6 +22,10 @@ class IplayerIcon extends StatelessWidget {
         data.svgAsset!,
         width: size,
         height: size,
+        colorFilter: ColorFilter.mode(
+          data.color,
+          BlendMode.srcIn,
+        ),
       );
     }
     if(data.imageAsset != null){

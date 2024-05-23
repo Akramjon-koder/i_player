@@ -55,7 +55,7 @@ class IPlayer extends StatefulWidget {
     this.onPositionChange,
     this.tools = const[],
     this.screenSetOptions,
-    this.theme = defaultIPlayerTheme,
+    this.theme = const IplayerTheme(),
   });
 
   @override

@@ -17,10 +17,10 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   double width = 1;
   ScreenSetOptions get options => const ScreenSetOptions(
-    unActiveDuration: 5,
+    unActiveDuration: 4,
     activeDuration: 1,
     maxOpasity: 1,
-    minOpasity: 0.1,
+    minOpasity: 0.5,
     isScreenSecure: true,
     pauseWhenRecording: true,
     screenRecordedText: 'Don\'t record screen',
@@ -31,11 +31,13 @@ class _MyAppState extends State<MyApp> {
       ),
     ),
     positions: [
+      null,
+      null,
+      null,
+      null,
+      null,
       Alignment.topLeft,
       Alignment.topRight,
-      Alignment.center,
-      Alignment.bottomRight,
-      Alignment.bottomLeft,
       Alignment.center,
     ],
   );
@@ -54,8 +56,8 @@ class _MyAppState extends State<MyApp> {
       home: ValueListenableBuilder(
         valueListenable: orientationNotifier,
         child: IPlayer(
-          theme: defaultIPlayerTheme.copyWith(
-            title: const Text(
+          theme: const IplayerTheme(
+            title: Text(
               'Video name',
               textAlign: TextAlign.center,
               maxLines: 2,
@@ -66,6 +68,11 @@ class _MyAppState extends State<MyApp> {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
+            // back: const IconSourceData(
+            //   // svgAsset: 'assets/icons/back.svg',
+            //   //imageAsset: 'assets/images/back.png',
+            //   icon: Icons.arrow_back,
+            // ),
           ),
           onPositionChange: (position,duration){
             ///save position
