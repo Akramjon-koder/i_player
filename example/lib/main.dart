@@ -54,8 +54,20 @@ class _MyAppState extends State<MyApp> {
       home: ValueListenableBuilder(
         valueListenable: orientationNotifier,
         child: IPlayer(
-          title: 'Video name',
-          onPositionChange: (position){
+          theme: defaultIPlayerTheme.copyWith(
+            title: const Text(
+              'Video name',
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+                fontSize: 16,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+          onPositionChange: (position,duration){
             ///save position
           },
           tools: [

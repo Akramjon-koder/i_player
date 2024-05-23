@@ -9,9 +9,11 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'constants.dart';
 import 'dialog.dart';
+import 'icon.dart';
 import 'player_notifier.dart';
 import 'screen_set.dart';
 import 'screen_set_options.dart';
+import 'theme.dart';
 import 'touch_tools.dart';
 
 double height = 1, width = 1, arifmethic = 1; //size variables
@@ -31,22 +33,6 @@ extension ExtSize on num {
 }
 
 class IPlayer extends StatefulWidget {
-  /// Videoni yuqori qismida chiqadigan nomi
-  /// ushbu nom shu video qayta ko'rilganda pozitsiyasini saqlab qolish uchun ishlatilishi ham mumkin
-  final String title;
-
-  /// aktiv bo'lish rangi
-  final Color primaryColor;
-
-  /// noaktiv rangi
-  final Color secondaryColor;
-
-  /// ortqaga qaytish tugmasini borligi
-  final bool canPop;
-
-  /// ortqaga qaytish tugmasini borligi
-  final bool isFullScreen;
-
   /// Qo'shimcha hususiyatlardan foydalanishingiz mumkin
   final ScreenSetOptions? screenSetOptions;
 
@@ -56,20 +42,20 @@ class IPlayer extends StatefulWidget {
   /// Qo'shimcha tugmalar
   final List<Widget> tools;
 
+  /// Qo'shimcha tugmalar
+  final IplayerTheme theme;
+
   /// video pozitsiyasi o'zgarganda video pozitsiyasini(sekund) qaytaradi
-  final Function(int position)? onPositionChange;
+  /// 0 >= position <= 1 oralig'ida bo'ladi
+  final Function(int position, int duration)? onPositionChange;
 
   const IPlayer({
     super.key,
-    required this.title,
     required this.sourceUrl,
     this.onPositionChange,
     this.tools = const[],
-    this.canPop = false,
-    this.isFullScreen = false,
-    this.primaryColor = Colors.red,
-    this.secondaryColor = Colors.grey,
     this.screenSetOptions,
+    this.theme = defaultIPlayerTheme,
   });
 
   @override
@@ -82,16 +68,28 @@ class _IPlayerState extends State<IPlayer> {
 
   /// agar canpop = true bo'lsa ekran full screen deb qaraladi
   /// qurilmani avvalgi saqlab turish uchun
-  late Orientation? initialOrientation;
+  Orientation? initialOrientation;
 
   @override
   void initState() {
     WakelockPlus.enable();
     playerNotifier.initializeUrl(widget.sourceUrl);
-    if(widget.canPop){
-      setFullScreen();
-    }
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if(widget.theme.back != null && initialOrientation == null){
+      WidgetsFlutterBinding.ensureInitialized();
+      initialOrientation = MediaQuery.of(context).orientation;
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+    }
+    super.didChangeDependencies();
   }
 
   @override
@@ -187,9 +185,8 @@ class _IPlayerState extends State<IPlayer> {
                                                       }
                                                       playerNotifier.unHide();
                                                     },
-                                                    child: FaIcon(
-                                                      FontAwesomeIcons.backward,
-                                                      color: Colors.white,
+                                                    child: IplayerIcon(
+                                                      data: widget.theme.left,
                                                       size: 32.o,
                                                     ),
                                                   ),
@@ -205,12 +202,11 @@ class _IPlayerState extends State<IPlayer> {
                                                         }
                                                         playerNotifier.unHide();
                                                       },
-                                                      child: FaIcon(
-                                                        playerNotifier.playerController
+                                                      child: IplayerIcon(
+                                                        data: playerNotifier.playerController
                                                             .value.isPlaying
-                                                            ? FontAwesomeIcons.pause
-                                                            : FontAwesomeIcons.play,
-                                                        color: Colors.white,
+                                                            ? widget.theme.pause
+                                                            : widget.theme.play,
                                                         size: 48.o,
                                                       ),
                                                     ),
@@ -232,9 +228,8 @@ class _IPlayerState extends State<IPlayer> {
                                                       }
                                                       playerNotifier.unHide();
                                                     },
-                                                    child: FaIcon(
-                                                      FontAwesomeIcons.forward,
-                                                      color: Colors.white,
+                                                    child: IplayerIcon(
+                                                      data: widget.theme.right,
                                                       size: 32.o,
                                                     ),
                                                   ),
@@ -268,32 +263,21 @@ class _IPlayerState extends State<IPlayer> {
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    if(widget.canPop)
+                                    if(widget.theme.back != null)
                                       IconButton(
                                         onPressed: () {
                                           playerNotifier.back(true);
                                           Navigator.pop(context);
                                         },
-                                        icon: FaIcon(
-                                          FontAwesomeIcons.arrowLeft,
-                                          color: Colors.white,
+                                        icon: IplayerIcon(
+                                          data: widget.theme.back!,
                                           size: 22.o,
                                         ),
                                       ),
                                     Expanded(
-                                      child: Text(
-                                        widget.title,
-                                        textAlign: TextAlign.center,
-                                        maxLines: 2,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.white,
-                                          fontSize: 16.o,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
+                                      child: widget.theme.title
                                     ),
-                                    if(widget.canPop)
+                                    if(widget.theme.back != null)
                                       SizedBox(
                                         width: 20.o,
                                       ),
@@ -303,15 +287,21 @@ class _IPlayerState extends State<IPlayer> {
                                 ValueListenableBuilder(
                                   valueListenable: playerNotifier.slider,
                                   builder: (context, value ,child) {
+                                    if(widget.onPositionChange!= null){
+                                      widget.onPositionChange!(
+                                        playerNotifier.playerController.value.position.inSeconds,
+                                        playerNotifier.playerController.value.duration.inSeconds,
+                                      );
+                                    }
                                     if (_isBlocked) {
                                       return const SizedBox();
                                     }
                                     return Slider(
                                       value: playerNotifier.slider.value,
-                                      activeColor: widget.primaryColor,
-                                      secondaryActiveColor: widget.secondaryColor,
+                                      activeColor: widget.theme.primaryColor,
+                                      secondaryActiveColor: widget.theme.secondaryColor,
                                       inactiveColor:
-                                      widget.secondaryColor.withOpacity(0.5),
+                                      widget.theme.secondaryColor.withOpacity(0.5),
                                       onChangeStart: (value) =>
                                       playerNotifier.isSliderTouch = true,
                                       onChangeEnd: (newValue) {
@@ -344,21 +334,19 @@ class _IPlayerState extends State<IPlayer> {
                                     children: _isBlocked
                                         ? [
                                       const Spacer(),
-                                      _tool(
-                                        onTap: () => setState(() {
-                                          _isBlocked = !_isBlocked;
-                                          playerNotifier.unHide();
-                                        }),
-                                        icon: FontAwesomeIcons.lockOpen,
-                                      ),
+                                      if(widget.theme.unBlock != null)
+                                        _tool(
+                                          onTap: () => setState(() {
+                                            _isBlocked = !_isBlocked;
+                                            playerNotifier.unHide();
+                                          }),
+                                          icon: widget.theme.unBlock!,
+                                        ),
                                     ]
                                         : [
                                       ValueListenableBuilder(
                                           valueListenable: playerNotifier.videoPosition,
                                           builder: (context, value, child) {
-                                            if(widget.onPositionChange!= null){
-                                              widget.onPositionChange!(playerNotifier.playerController.value.position.inSeconds);
-                                            }
                                             return Text(
                                               '${_videoPosition(playerNotifier.playerController.value.position)} / ${_videoPosition(playerNotifier.playerController.value.duration)}',
                                               style: TextStyle(
@@ -373,18 +361,19 @@ class _IPlayerState extends State<IPlayer> {
                                           .contains('.m3u8'))
                                         _tool(
                                           onTap: () => playerNotifier.selectQuality(context),
-                                          icon: FontAwesomeIcons.film,
+                                          icon: widget.theme.quality,
+                                        ),
+                                      if(widget.theme.block != null)
+                                        _tool(
+                                          onTap: () => setState(() {
+                                            _isBlocked = !_isBlocked;
+                                            playerNotifier.unHide();
+                                          }),
+                                          icon: widget.theme.block!,
                                         ),
                                       _tool(
-                                        onTap: () => setState(() {
-                                          _isBlocked = !_isBlocked;
-                                          playerNotifier.unHide();
-                                        }),
-                                        icon: FontAwesomeIcons.lock,
-                                      ),
-                                      _tool(
                                         onTap: _setSpeed,
-                                        icon: FontAwesomeIcons.gaugeHigh,
+                                        icon: widget.theme.speed,
                                       ),
                                       ...widget.tools,
                                     ],
@@ -400,11 +389,7 @@ class _IPlayerState extends State<IPlayer> {
                         ),
                       ]
                     : [
-                        Center(
-                          child: CircularProgressIndicator(
-                            backgroundColor: widget.primaryColor,
-                          ),
-                        )
+                        Center(child: widget.theme.loadIndicator)
                       ],
               );
             });
@@ -417,7 +402,7 @@ class _IPlayerState extends State<IPlayer> {
   @override
   void dispose() {
     super.dispose();
-    if(widget.canPop){
+    if(widget.theme.back != null && initialOrientation == null){
       SystemChrome.setPreferredOrientations(
           initialOrientation == Orientation.landscape ?[
         DeviceOrientation.landscapeLeft,
@@ -441,21 +426,11 @@ class _IPlayerState extends State<IPlayer> {
         },
       );
 
-  void setFullScreen() {
-    WidgetsFlutterBinding.ensureInitialized();
-    initialOrientation = MediaQuery.of(context).orientation;
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-  }
 }
 
 class _tool extends StatelessWidget {
   final Function() onTap;
-  final IconData icon;
+  final IconSourceData icon;
   const _tool({required this.onTap, required this.icon});
 
   @override
@@ -469,10 +444,9 @@ class _tool extends StatelessWidget {
           bottom: 10.o,
         ),
         color: Colors.transparent,
-        child: FaIcon(
-          icon,
+        child: IplayerIcon(
+          data: icon,
           size: 22.o,
-          color: Colors.white,
         ),
       ),
     );
