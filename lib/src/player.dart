@@ -49,13 +49,17 @@ class IPlayer extends StatefulWidget {
   /// 0 >= position <= 1 oralig'ida bo'ladi
   final Function(int position, int duration)? onPositionChange;
 
+  /// player yopilganda ishga tushadi
+  final Function(int position, int duration)? onBack;
+
   const IPlayer({
     super.key,
     required this.sourceUrl,
-    this.onPositionChange,
+    this.theme = const IplayerTheme(),
     this.tools = const[],
     this.screenSetOptions,
-    this.theme = const IplayerTheme(),
+    this.onBack,
+    this.onPositionChange,
   });
 
   @override
@@ -402,6 +406,13 @@ class _IPlayerState extends State<IPlayer> {
   @override
   void dispose() {
     super.dispose();
+    if(widget.onBack != null){
+      widget.onBack!(
+        playerNotifier.playerController.value.position.inSeconds,
+        playerNotifier.playerController.value.duration.inSeconds,
+      );
+    }
+
     if(widget.theme.back != null && initialOrientation == null){
       SystemChrome.setPreferredOrientations(
           initialOrientation == Orientation.landscape ?[

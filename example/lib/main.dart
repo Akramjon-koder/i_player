@@ -37,7 +37,7 @@ class _MyAppState extends State<MyApp> {
       null,
       null,
       Alignment.topLeft,
-      Alignment.topRight,
+      Alignment.bottomRight,
       Alignment.center,
     ],
   );
