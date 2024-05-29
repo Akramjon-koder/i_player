@@ -86,6 +86,7 @@ class _IPlayerState extends State<IPlayer> {
     if(widget.theme.back != null && initialOrientation == null){
       WidgetsFlutterBinding.ensureInitialized();
       initialOrientation = MediaQuery.of(context).orientation;
+      print('initialOrientation: $initialOrientation');
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.landscapeLeft,
         DeviceOrientation.landscapeRight,
@@ -412,8 +413,7 @@ class _IPlayerState extends State<IPlayer> {
         playerNotifier.playerController.value.duration.inSeconds,
       );
     }
-
-    if(widget.theme.back != null && initialOrientation == null){
+    if(widget.theme.back != null && initialOrientation != null){
       SystemChrome.setPreferredOrientations(
           initialOrientation == Orientation.landscape ?[
         DeviceOrientation.landscapeLeft,

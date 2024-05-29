@@ -191,9 +191,7 @@ class PlayerNotifier with ChangeNotifier {
       prefs!.setInt(_initialUrl, playerController.value.position.inSeconds);
     }
     if(isPop){
-      Future.delayed(const Duration(milliseconds: 10)).then((v){
-        playerController.dispose();
-      });
+      playerController.pause();
     }
     _initialUrl = '';
   }
