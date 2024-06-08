@@ -142,28 +142,24 @@ class _IPlayerState extends State<IPlayer> {
                               child: Center(
                                 child: SizedBox(
                                   width: 600.w,
-                                  height: 600.w / playerNotifier.playerController.value.aspectRatio,
+                                  height: 600.h,
                                   child: Stack(
                                     alignment: Alignment.center,
                                     children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: AspectRatio(
-                                              aspectRatio:
-                                              playerNotifier.playerController.value.aspectRatio,
-                                              child: Stack(
-                                                children: [
-                                                  VideoPlayer(playerNotifier.playerController),
-                                                  if(widget.screenSetOptions != null)
-                                                    ScreenSet(
-                                                      options: widget.screenSetOptions!,
-                                                    ),
-                                                ],
-                                              ),
-                                            ),
+                                      Center(
+                                        child: AspectRatio(
+                                          aspectRatio:
+                                          playerNotifier.playerController.value.aspectRatio,
+                                          child: Stack(
+                                            children: [
+                                              VideoPlayer(playerNotifier.playerController),
+                                              if(widget.screenSetOptions != null)
+                                                ScreenSet(
+                                                  options: widget.screenSetOptions!,
+                                                ),
+                                            ],
                                           ),
-                                        ],
+                                        ),
                                       ),
                                       if (!_isBlocked)
                                         Center(
