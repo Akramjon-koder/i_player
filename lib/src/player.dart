@@ -86,13 +86,15 @@ class _IPlayerState extends State<IPlayer> {
     if(widget.theme.back != null && initialOrientation == null){
       WidgetsFlutterBinding.ensureInitialized();
       initialOrientation = MediaQuery.of(context).orientation;
-      print('initialOrientation: $initialOrientation');
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.landscapeLeft,
         DeviceOrientation.landscapeRight,
         DeviceOrientation.portraitUp,
         DeviceOrientation.portraitDown,
       ]);
+      if(widget.onBack != null){
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,overlays: []);
+      }
     }
     super.didChangeDependencies();
   }
@@ -404,6 +406,7 @@ class _IPlayerState extends State<IPlayer> {
   void dispose() {
     super.dispose();
     if(widget.onBack != null){
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,overlays: SystemUiOverlay.values);
       widget.onBack!(
         playerNotifier.playerController.value.position.inSeconds,
         playerNotifier.playerController.value.duration.inSeconds,

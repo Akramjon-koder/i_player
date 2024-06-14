@@ -13,7 +13,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
 
-  video_player: ^2.8.6
+  video_player: ^2.8.7
   wakelock_plus: ^1.2.5
   font_awesome_flutter: ^10.7.0
   screen_brightness: ^1.0.1
