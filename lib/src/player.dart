@@ -259,8 +259,11 @@ class _IPlayerState extends State<IPlayer> {
                           builder: (context, isHide ,child) => isHide
                               ? const SizedBox()
                               : child!,
-                          child: SafeArea(
-                            bottom: false,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              top: 10.o,
+                              bottom: 12.o,
+                            ),
                             child: Column(
                               children: [
                                 Row(
@@ -382,10 +385,6 @@ class _IPlayerState extends State<IPlayer> {
                                     ],
                                   ),
                                 ),
-                                if (Platform.isIOS)
-                                  SizedBox(
-                                    height: 12.o,
-                                  )
                               ],
                             ),
                           ),
