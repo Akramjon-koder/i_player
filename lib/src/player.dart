@@ -93,7 +93,9 @@ class _IPlayerState extends State<IPlayer> {
         DeviceOrientation.portraitDown,
       ]);
       if(widget.onBack != null){
-        SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,overlays: []);
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,overlays: [
+          SystemUiOverlay.top,
+        ]);
       }
     }
     super.didChangeDependencies();
@@ -259,133 +261,135 @@ class _IPlayerState extends State<IPlayer> {
                           builder: (context, isHide ,child) => isHide
                               ? const SizedBox()
                               : child!,
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                              top: 10.o,
-                              bottom: 12.o,
-                            ),
-                            child: Column(
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    if(widget.theme.back != null)
-                                      IconButton(
-                                        onPressed: () {
-                                          playerNotifier.back(true);
-                                          Navigator.pop(context);
-                                        },
-                                        icon: IplayerIcon(
-                                          data: widget.theme.back!,
-                                          size: 22.o,
+                          child: SafeArea(
+                            bottom: false,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                bottom: 10.o,
+                              ),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      if(widget.theme.back != null)
+                                        IconButton(
+                                          onPressed: () {
+                                            playerNotifier.back(true);
+                                            Navigator.pop(context);
+                                          },
+                                          icon: IplayerIcon(
+                                            data: widget.theme.back!,
+                                            size: 22.o,
+                                          ),
                                         ),
+                                      Expanded(
+                                        child: widget.theme.title
                                       ),
-                                    Expanded(
-                                      child: widget.theme.title
-                                    ),
-                                    if(widget.theme.back != null)
-                                      SizedBox(
-                                        width: 20.o,
-                                      ),
-                                  ],
-                                ),
-                                const Spacer(),
-                                ValueListenableBuilder(
-                                  valueListenable: playerNotifier.slider,
-                                  builder: (context, value ,child) {
-                                    if(widget.onPositionChange!= null){
-                                      widget.onPositionChange!(
-                                        playerNotifier.playerController.value.position.inSeconds,
-                                        playerNotifier.playerController.value.duration.inSeconds,
-                                      );
-                                    }
-                                    if (_isBlocked) {
-                                      return const SizedBox();
-                                    }
-                                    return Slider(
-                                      value: playerNotifier.slider.value,
-                                      activeColor: widget.theme.primaryColor,
-                                      secondaryActiveColor: widget.theme.secondaryColor,
-                                      inactiveColor:
-                                      widget.theme.secondaryColor.withOpacity(0.5),
-                                      onChangeStart: (value) =>
-                                      playerNotifier.isSliderTouch = true,
-                                      onChangeEnd: (newValue) {
-                                        playerNotifier.slider.value = newValue;
-                                        playerNotifier.playerController
-                                            .seekTo(Duration(
-                                            milliseconds: (playerNotifier.playerController
-                                                .value
-                                                .duration
-                                                .inMilliseconds *
-                                                playerNotifier.slider.value)
-                                                .toInt()))
-                                            .then((value) =>
-                                        playerNotifier.isSliderTouch = false);
-                                      },
-                                      onChanged: (double newValue) {
-                                        playerNotifier.slider.value = newValue;
-                                        playerNotifier.unHide();
-                                      },
-                                    );
-                                  },
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    left: 16.o,
-                                    right: 8.o,
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: _isBlocked
-                                        ? [
-                                      const Spacer(),
-                                      if(widget.theme.unBlock != null)
-                                        _tool(
-                                          onTap: () => setState(() {
-                                            _isBlocked = !_isBlocked;
-                                            playerNotifier.unHide();
-                                          }),
-                                          icon: widget.theme.unBlock!,
+                                      if(widget.theme.back != null)
+                                        SizedBox(
+                                          width: 20.o,
                                         ),
-                                    ]
-                                        : [
-                                      ValueListenableBuilder(
-                                          valueListenable: playerNotifier.videoPosition,
-                                          builder: (context, value, child) {
-                                            return Text(
-                                              '${_videoPosition(playerNotifier.playerController.value.position)} / ${_videoPosition(playerNotifier.playerController.value.duration)}',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 16.o,
-                                                color: Colors.white,
-                                              ),
-                                            );
-                                          }),
-                                      const Spacer(),
-                                      if (widget.sourceUrl
-                                          .contains('.m3u8'))
-                                        _tool(
-                                          onTap: () => playerNotifier.selectQuality(context),
-                                          icon: widget.theme.quality,
-                                        ),
-                                      if(widget.theme.block != null)
-                                        _tool(
-                                          onTap: () => setState(() {
-                                            _isBlocked = !_isBlocked;
-                                            playerNotifier.unHide();
-                                          }),
-                                          icon: widget.theme.block!,
-                                        ),
-                                      _tool(
-                                        onTap: _setSpeed,
-                                        icon: widget.theme.speed,
-                                      ),
-                                      ...widget.tools,
                                     ],
                                   ),
-                                ),
-                              ],
+                                  const Spacer(),
+                                  ValueListenableBuilder(
+                                    valueListenable: playerNotifier.slider,
+                                    builder: (context, value ,child) {
+                                      if(widget.onPositionChange!= null){
+                                        widget.onPositionChange!(
+                                          playerNotifier.playerController.value.position.inSeconds,
+                                          playerNotifier.playerController.value.duration.inSeconds,
+                                        );
+                                      }
+                                      if (_isBlocked) {
+                                        return const SizedBox();
+                                      }
+                                      return Slider(
+                                        value: playerNotifier.slider.value,
+                                        activeColor: widget.theme.primaryColor,
+                                        secondaryActiveColor: widget.theme.secondaryColor,
+                                        inactiveColor:
+                                        widget.theme.secondaryColor.withOpacity(0.5),
+                                        onChangeStart: (value) =>
+                                        playerNotifier.isSliderTouch = true,
+                                        onChangeEnd: (newValue) {
+                                          playerNotifier.slider.value = newValue;
+                                          playerNotifier.playerController
+                                              .seekTo(Duration(
+                                              milliseconds: (playerNotifier.playerController
+                                                  .value
+                                                  .duration
+                                                  .inMilliseconds *
+                                                  playerNotifier.slider.value)
+                                                  .toInt()))
+                                              .then((value) =>
+                                          playerNotifier.isSliderTouch = false);
+                                        },
+                                        onChanged: (double newValue) {
+                                          playerNotifier.slider.value = newValue;
+                                          playerNotifier.unHide();
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      left: 16.o,
+                                      right: 8.o,
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: _isBlocked
+                                          ? [
+                                        const Spacer(),
+                                        if(widget.theme.unBlock != null)
+                                          _tool(
+                                            onTap: () => setState(() {
+                                              _isBlocked = !_isBlocked;
+                                              playerNotifier.unHide();
+                                            }),
+                                            icon: widget.theme.unBlock!,
+                                          ),
+                                      ]
+                                          : [
+                                        ValueListenableBuilder(
+                                            valueListenable: playerNotifier.videoPosition,
+                                            builder: (context, value, child) {
+                                              return Text(
+                                                '${_videoPosition(playerNotifier.playerController.value.position)} / ${_videoPosition(playerNotifier.playerController.value.duration)}',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 16.o,
+                                                  color: Colors.white,
+                                                ),
+                                              );
+                                            }),
+                                        const Spacer(),
+                                        if (widget.sourceUrl
+                                            .contains('.m3u8'))
+                                          _tool(
+                                            onTap: () => playerNotifier.selectQuality(context),
+                                            icon: widget.theme.quality,
+                                          ),
+                                        if(widget.theme.block != null)
+                                          _tool(
+                                            onTap: () => setState(() {
+                                              _isBlocked = !_isBlocked;
+                                              playerNotifier.unHide();
+                                            }),
+                                            icon: widget.theme.block!,
+                                          ),
+                                        _tool(
+                                          onTap: _setSpeed,
+                                          icon: widget.theme.speed,
+                                        ),
+                                        ...widget.tools,
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

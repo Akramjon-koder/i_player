@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:i_player/src/player.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 import 'package:video_player/video_player.dart';
 
@@ -29,8 +30,9 @@ class _TouchToolsState extends State<TouchTools> {
   final StreamController<int> leftController = StreamController<int>();
   final StreamController<int> rightController = StreamController<int>();
   int tick = 0;
-  double brightness = 0.5;
+  double brightness = 0.5, volume = 0.7;
   final screenBrightness = ScreenBrightness();
+  bool brightnessSetting = false, volumeSetting = false;
 
   @override
   void dispose() {
@@ -41,6 +43,7 @@ class _TouchToolsState extends State<TouchTools> {
   @override
   void initState() {
     try {
+      volume = widget.playerController.value.volume;
       screenBrightness.current.then((value) => brightness = value);
     } catch (e) {
       print(e);
@@ -57,11 +60,57 @@ class _TouchToolsState extends State<TouchTools> {
         GestureDetector(
           onLongPressStart: (details) => startTimer(true),
           onLongPressEnd: (details) => cancelAnimating(),
-          onVerticalDragUpdate: (details) =>
-              setBrightness(details.primaryDelta ?? 0),
+          onVerticalDragStart: (details){
+            brightnessSetting = true;
+          },
+          onVerticalDragEnd: (details){
+            brightnessSetting = false;
+            rightController.sink.add(1);
+          },
+          onVerticalDragCancel: (){
+            brightnessSetting = false;
+            rightController.sink.add(1);
+          },
+          onVerticalDragUpdate: (details) {
+            setBrightness(details.primaryDelta ?? 0);
+            rightController.sink.add(1);
+          },
           child: StreamBuilder<int>(
               stream: leftController.stream,
               builder: (context, snapshot) {
+                if(volumeSetting){
+                  return SizedBox(
+                    height: widget.height,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: 10.o,
+                        top: 10.o,
+                        bottom: 10.o,
+                      ),
+                      child: Column(
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.volumeHigh,
+                            size: 14.o,
+                            color: Colors.white,
+                          ),
+                          SizedBox(height: 8.o),
+                          Expanded(
+                            child: RotatedBox(
+                              quarterTurns: -1,
+                              child: LinearProgressIndicator(
+                                value: volume,
+                                borderRadius: BorderRadius.circular(10.o),
+                                backgroundColor: Colors.white.withOpacity(0.3),
+                                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
                 return Container(
                   width: widget.height / 2,
                   height: widget.height,
@@ -113,11 +162,57 @@ class _TouchToolsState extends State<TouchTools> {
         GestureDetector(
           onLongPressStart: (details) => startTimer(false),
           onLongPressEnd: (details) => cancelAnimating(),
-          onVerticalDragUpdate: (details) =>
-              setBrightness(details.primaryDelta ?? 0),
+          onVerticalDragStart: (details){
+            volumeSetting = true;
+          },
+          onVerticalDragEnd: (details){
+            volumeSetting = false;
+            leftController.sink.add(1);
+          },
+          onVerticalDragCancel: (){
+            volumeSetting = false;
+            leftController.sink.add(1);
+          },
+          onVerticalDragUpdate: (details) {
+            setVolume(details.primaryDelta ?? 0);
+            leftController.sink.add(1);
+          },
           child: StreamBuilder<int>(
               stream: rightController.stream,
               builder: (context, snapshot) {
+                if(brightnessSetting){
+                  return SizedBox(
+                    height: widget.height,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        right: 10.o,
+                        top: 10.o,
+                        bottom: 10.o,
+                      ),
+                      child: Column(
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.sun,
+                            size: 14.o,
+                            color: Colors.white,
+                          ),
+                          SizedBox(height: 8.o),
+                          Expanded(
+                            child: RotatedBox(
+                              quarterTurns: -1,
+                              child: LinearProgressIndicator(
+                                value: brightness,
+                                borderRadius: BorderRadius.circular(10.o),
+                                backgroundColor: Colors.white.withOpacity(0.3),
+                                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
                 return Container(
                   width: widget.height / 2,
                   height: widget.height,
@@ -175,11 +270,25 @@ class _TouchToolsState extends State<TouchTools> {
     try {
       screenBrightness
           .setScreenBrightness(newBrightness)
-          .then((value) => brightness = newBrightness);
+          .then((value){
+        brightness = newBrightness;
+      });
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
       throw 'Failed to get current brightness';
     }
+  }
+
+  void setVolume(double delta) {
+    double newVolume = volume - (delta / 100);
+    if (newVolume > 1) {
+      newVolume = 1;
+    }
+    if (newVolume < 0) {
+      newVolume = 0;
+    }
+    volume = newVolume;
+    widget.playerController.setVolume(volume);
   }
 
   void startTimer(bool leftAnimating) {

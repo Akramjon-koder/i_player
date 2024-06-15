@@ -393,7 +393,7 @@
     },
     {
       "name": "video_player",
-      "rootUri": "file:///Users/akramjonminochdinov/.pub-cache/hosted/pub.dev/video_player-2.8.6",
+      "rootUri": "file:///Users/akramjonminochdinov/.pub-cache/hosted/pub.dev/video_player-2.8.7",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -470,10 +470,10 @@
       "languageVersion": "3.4"
     }
   ],
-  "generated": "2024-05-23T04:38:09.997386Z",
+  "generated": "2024-06-15T10:53:05.745443Z",
   "generator": "pub",
-  "generatorVersion": "3.4.0",
+  "generatorVersion": "3.4.3",
   "flutterRoot": "file:///Users/akramjonminochdinov/development/flutter",
-  "flutterVersion": "3.22.0",
+  "flutterVersion": "3.22.2",
   "pubCache": "file:///Users/akramjonminochdinov/.pub-cache"
 }
