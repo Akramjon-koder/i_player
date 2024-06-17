@@ -45,6 +45,9 @@ class IPlayer extends StatefulWidget {
   /// Qo'shimcha tugmalar
   final IplayerTheme theme;
 
+  /// Reklama uchun yoki qo'shimcha ui
+  final Widget ad;
+
   /// video pozitsiyasi o'zgarganda video pozitsiyasini(sekund) qaytaradi
   /// 0 >= position <= 1 oralig'ida bo'ladi
   final Function(int position, int duration)? onPositionChange;
@@ -60,6 +63,7 @@ class IPlayer extends StatefulWidget {
     this.screenSetOptions,
     this.onBack,
     this.onPositionChange,
+    this.ad = const SizedBox(),
   });
 
   @override
@@ -256,6 +260,7 @@ class _IPlayerState extends State<IPlayer> {
                             ),
                           ),
                         ),
+                        widget.ad,
                         ValueListenableBuilder(
                           valueListenable: playerNotifier.hideController,
                           builder: (context, isHide ,child) => isHide
